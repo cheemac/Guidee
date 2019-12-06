@@ -46,11 +46,11 @@ public class KakaoPay {
         this.kakaoPayApprovalVO = new KakaoPayApprovalVO();
     }
     // 결제 요청(상품정보 가지는 Map형 객체 받아와야함)
-    public void kakaoPayReadyByHTTP() {
+    public void kakaoPayReadyByHTTP(PlanAllInfo planAllInfo) {
         log.info("KakaoPayReadyByHTTP............................................");
         log.info("-----------------------------");
         try {
-
+            int total_amount = (Integer.parseInt(planAllInfo.getPlanBasePrice()) * Integer.parseInt(planAllInfo.getPlanRecommendedPerson()));
             String apiURL = "https://kapi.kakao.com/v1/payment/ready";
             log.info("카카오페이 클래스시작:현재URL은"+apiURL);
             URL url = new URL(apiURL);
@@ -67,10 +67,10 @@ public class KakaoPay {
             params.put("cid", cid);
             params.put("partner_order_id", "1001");
             params.put("partner_user_id", "gorany");
-            params.put("item_name", "2019소프트웨어공학");
-            params.put("quantity", "1");
-            params.put("total_amount", "129999");
-            params.put("tax_free_amount", "10000");
+            params.put("item_name", planAllInfo.getPlanName());
+            params.put("quantity", planAllInfo.getPlanRecommendedPerson());
+            params.put("total_amount", planAllInfo.getPlanBasePrice());
+            params.put("tax_free_amount", total_amount);
             params.put("approval_url", approval_url);
             params.put("cancel_url", cancel_url);
             params.put("fail_url", fail_url);

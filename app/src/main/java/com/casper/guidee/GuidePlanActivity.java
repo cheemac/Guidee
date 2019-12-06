@@ -115,7 +115,7 @@ public class GuidePlanActivity extends AppCompatActivity {
     /**********************API쓰레드*****************************/
     //getAPIURL
     class APIThread extends Thread {
-        Controller controller = new Controller() ;
+        Controller controller = new Controller(planAllInfo) ;
         String isExpire;   //타이머 상태 표기
         int time = 10;
         Message msg = Message.obtain();

@@ -6,13 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 class SampleController {
 
     private KakaoPay kakaopay;
-
-    public SampleController(){
+    private PlanAllInfo planAllInfo;
+    public SampleController(PlanAllInfo planAllInfo){
         this.kakaopay = new KakaoPay();
+        this.planAllInfo = planAllInfo;;
     }
 
     public void readyToKakao(){
-        kakaopay.kakaoPayReadyByHTTP();
+        kakaopay.kakaoPayReadyByHTTP(this.planAllInfo);
 
     }
     public void approveToKakao(){
