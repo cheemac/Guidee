@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('org.springframework.context-3.0.4.RELEASE.jar'))

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.casper.guidee.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/payment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="pay" />
+
+        <Button
+            android:id="@+id/popup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="popup" />
+        <Button
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="login" />
+
+        <Button
+            android:id="@+id/editInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EditInfo" />
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGOUT" />
+
+        <Button
+            android:id="@+id/guideReg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GUIDE REGIST" />
+
+        <Button
+            android:id="@+id/search_guide_plan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SEARCH GUIDE PLAN" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/loginInfo"
+            android:hint="login Info"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
