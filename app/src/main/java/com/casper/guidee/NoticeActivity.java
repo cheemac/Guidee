@@ -1,18 +1,17 @@
 package com.casper.guidee;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import android.os.Bundle;
 import android.widget.Toast;
 
-public class noticeActivity extends AppCompatActivity {
+public class NoticeActivity extends Activity {
 
     TextView noticeText;
 
@@ -32,7 +31,6 @@ public class noticeActivity extends AppCompatActivity {
         String data = intent.getStringExtra("data");
         noticeText.setText(data);
 
-
         findViewById(R.id.YesButton).setOnClickListener(mClickListener);
         findViewById(R.id.NoButton).setOnClickListener(mClickListener);
 
@@ -47,21 +45,19 @@ public class noticeActivity extends AppCompatActivity {
                 case R.id.YesButton:
                     Log.i("pay","click paybutton");
                     try {
-                        //액티비티(팝업) 닫기
-                        finish();
-                        /*API호출을 통한 결제또는 환불화면으로 진입
-                        *
-                        *
-                        *
-                        *
-                        *
-                        *
-                        *
-                        *
-                        * */
+
+
+                        //타이머 시작을 알림
+                        Intent intent = new Intent();
+                        intent.putExtra("result", "RESULT_OK");
+                        setResult(RESULT_OK, intent);
+
+                        //API호출을 통한 API화면으로 진입 및 액티비티(팝업) 닫기
+                         onDestroy();
+                         finish();
                     }
                     catch (Exception e) {
-                        Toast.makeText(noticeActivity.this, "has error",
+                        Toast.makeText(NoticeActivity.this, "has error",
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -72,11 +68,12 @@ public class noticeActivity extends AppCompatActivity {
 
                     try {
                         //액티비티(팝업) 닫기
+                        onDestroy();
                         finish();
                         /*닫고 이전 화면으로 돌아가기*/
 
                     } catch (Exception e) {
-                        Toast.makeText(noticeActivity.this, "has error",
+                        Toast.makeText(NoticeActivity.this, "has error",
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -85,19 +82,26 @@ public class noticeActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+    }
 
+
+    //바깥레이어 클릭시 안닫히게
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //바깥레이어 클릭시 안닫히게
+
         if(event.getAction()==MotionEvent.ACTION_OUTSIDE){
             return false;
         }
         return true;
     }
-
+    //안드로이드 백버튼 막기
     @Override
     public void onBackPressed() {
-        //안드로이드 백버튼 막기
+
         return;
     }
 

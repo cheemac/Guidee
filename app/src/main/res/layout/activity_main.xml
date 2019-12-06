@@ -12,16 +12,16 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/payment"
+            android:id="@+id/paymentButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="pay" />
 
         <Button
-            android:id="@+id/popup"
+            android:id="@+id/paymentlistButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="popup" />
+            android:text="paymentlist" />
         <Button
             android:id="@+id/login"
             android:layout_width="match_parent"

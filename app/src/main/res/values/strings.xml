@@ -3,4 +3,19 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="paymentcompleted">결제완료</string>
+    <string name="personprice">인당 가격</string>
+    <string name="language">사용 가능 언어</string>
+    <string name="person">인원수</string>
+    <string name="payment_time">결제 일시:</string>
+    <string name="time">결제 날짜 및 시간</string>
+    <string name="price_for_person">(인당가격)</string>
+    <string name="somewhereprice">어딘가에서 받아올 가격</string>
+    <string name="somewherepeople">어딘가에서 받아올 인원 수</string>
+    <string name="somewherelanguage">어딘가에서 받아올 언어</string>
+    <string name="somewheredate">어딘가에서 받아올 날짜</string>
+    <string name="number_of_traveler">(인당)</string>
+    <string name="price">결제금액: </string>
+    <string name="schedule">세부일정</string>
+    <string name="ok">확인</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.payment).setOnClickListener(mClickListener);
-        findViewById(R.id.popup).setOnClickListener(mClickListener);
+        findViewById(R.id.paymentButton).setOnClickListener(mClickListener);
+        findViewById(R.id.paymentlistButton).setOnClickListener(mClickListener);
         findViewById(R.id.login).setOnClickListener(mClickListener);
         findViewById(R.id.editInfo).setOnClickListener(mClickListener);
         findViewById(R.id.logout).setOnClickListener(mClickListener);
@@ -53,39 +55,38 @@ public class MainActivity extends AppCompatActivity {
     //<!-- 버튼리스너 -->
     Button.OnClickListener mClickListener = new Button.OnClickListener() {
         public void onClick(View v) {
-
+            Intent intent;
             switch (v.getId()) {
                 //<!-- 결제버튼 -->
-                case R.id.payment:
+                case R.id.paymentButton:
                     Log.i("pay","click paybutton");
                     try {
-                        APIThread backThread = new APIThread();
-                        backThread.setDaemon(true);
-                        backThread.start();
-
-                    }
-                    catch (Exception e) {
-                        Toast.makeText(MainActivity.this, "has error",
-                                Toast.LENGTH_SHORT).show();
+                        //(현재 액티비티 , 전환액티비비티 클래스)
+                        intent = new Intent(MainActivity.this, NoticeActivity.class);
+                        //(공지명,공지내용)
+                        intent.putExtra("data","현재 상품을 구입하겠습니까?");
+                        //(액티비티전환)
+                        startActivityForResult(intent,1);
+                    } catch (Exception e) {
+                        Log.e("this erroer",e.toString());
                     }
                     break;
                 //<!-- 결제버튼 -->
 
-                //<!-- 환불버튼 -->
-                case R.id.popup:
+                //<!-- 결제내역버튼 -->
+                case R.id.paymentlistButton:
 
                     try {
                         //(현재 액티비티 , 전환액티비비티 클래스)
-                        Intent noticeIntent = new Intent(MainActivity.this, noticeActivity.class);
-                        //(공지명,공지내용)
-                        noticeIntent.putExtra("data","현재 상품을 환불하겠습니까?");
+                        intent = new Intent(MainActivity.this, PaymentListActivity.class);
+
                         //(액티비티전환)
-                        startActivityForResult(noticeIntent,1);
+                        startActivity(intent);
                     } catch (Exception e) {
-                        //log.info(e.toString());
+                        Log.e("this erroer",e.toString());
                     }
                     break;
-                //<!-- 환불버튼 -->
+                //<!-- 결제내역버튼 -->
 
                 //<!-- 로그인버튼 -->
                 case R.id.login:
@@ -158,53 +159,118 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //NoticeActivity
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 //데이터 받기
                 String result = data.getStringExtra("result");
-                txtResult.setText(result);
+                //
+                if(result.equals("RESULT_OK")){
+                    //타이머 쓰레드 시작
+
+                    //api쓰레드 시작
+                    APIThread apiThread = new APIThread();
+                    apiThread.setDaemon(true);
+                    apiThread.start();
+
+                }
             }
         }
     }
 
 
+    /**********************API쓰레드*****************************/
     //getAPIURL
     class APIThread extends Thread {
-        SampleController controller = new SampleController() ;
-        KakaoPay kakaoPay;
+        Controller controller = new Controller() ;
+        String isExpire;   //타이머 상태 표기
+        int time = 10;
         Message msg = Message.obtain();
-        //카카오페이로 요청시도
-        public void run() {
-            controller.readyToKakao();
-            controller.approveToKakao();
-            kakaoPay = controller.getKakaopay();
-          //  log.info("After,Thread make controller");
-            String next_redirect_app_url =  kakaoPay.getKakaoPayReadyVO().getNext_redirect_pc_url();
-        //    log.info("After sucess,loadURL");
-          //  log.info("loadURL은 "+next_redirect_app_url+"입니다.");
-            msg.obj = next_redirect_app_url;
-            mHandler.sendMessage(msg);
+        Message url = Message.obtain();
+        CountDownTimer countDownTimer = new CountDownTimer(time*60*1000, 1000) { //제한시간동안 시간간격으로 줄어듦
+            //타이머가 종료 될 떄 까지 동작하는 onTick함수
+            @Override
+            public void onTick(long millisUntilFinished) {
 
             }
+            //타이머가 종료될 때 실행되는 onFinish함수
+            @Override
+            public void onFinish() {
+                Log.d("CountDownTimer","timer is stop!!!");
+                isExpire = new String("isExpire");
+
+                msg.obj = (isExpire);
+                apiHandler.sendMessage(msg);
+            }
+
+
+        };
+        //카카오페이로 요청시도
+        public void run() {
+            //product는 상품과 상품의 정보를 가짐
+
+            startTimer();
+
+            controller.readyToKakao();
+            // controller.approveToKakao();
+
+            String next_redirect_app_url =  controller.getKakaopay().getKakaoPayReadyVO().getNext_redirect_pc_url();
+            url.obj = next_redirect_app_url;
+            apiHandler.sendMessage(url);
+
         }
 
 
-    Handler mHandler = new Handler(){
+        public void startTimer(){
+            Log.d("CountDownTimer","timer is start!!!");
+            this.countDownTimer.start();
+            isExpire = new String("isNotExpire");
+            msg.obj = (isExpire);
+            apiHandler.sendMessage(msg);
+        }
+        public void stopTimer(){
+            Log.d("CountDownTimer","timer is stop!!!");
+            this.countDownTimer.cancel();
+        }
+
+        public String getIsExprie(){
+            return  this.isExpire;
+        }
+    }
+    /**********************API쓰레드*****************************/
+    Handler apiHandler = new Handler(){
         public void handleMessage(Message msg) {
-            String next_redirect_app_url = (String) msg.obj;
-          /*  if(loadURL != null)
-            {*/
-          //      log.info("loadURL은 "+next_redirect_app_url+"입니다!!!");
-                Intent webItent = new Intent(MainActivity.this, apiWebwindow.class);
-                webItent.putExtra("next_redirect_app_url",next_redirect_app_url);
+            String message = (String) msg.obj;
+            Intent webIntent = new Intent(MainActivity.this, ApiWebwindow.class);
+            //쓰레드에서 타이머의 시작을 받음boolean문자받기
+            ApiWebwindow Activity = (ApiWebwindow)ApiWebwindow.apiActivity;
+            if ( message.equals("isNotExpire")) {
+                Log.i("상품상태","현재 결제할려는 상품은 결제가 가능합니다!!!");
+
+
+                //현재 켜진 인텐트전환
+                //DB에 해당상품 결제 불가능으로 바꿈
+            } else if (message.equals("isExpire")) {
+                Log.i("상품상태","현재 결제할려는 상품은 결제가 불가능합니다!!!");
+
+                //현재 켜진 인텐트 끄기
+                Activity.finish();
+                //DB에 해당상품 결제 가능으로 바꿈
+            }
+            else {
+                Log.i("loadURL","loadURL은 " + message + "입니다!!!");
+
+                webIntent.putExtra("next_redirect_app_url", message);
                 //(액티비티전환)
-                startActivityForResult(webItent,1);
-           // }
-            /*else{
-                log.info("\n<<loadURL은 null입니다.>>\n");
-            }*/
+                startActivity(webIntent);
+            }
         }
     };
+    /**********************API쓰레드*****************************/
+
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

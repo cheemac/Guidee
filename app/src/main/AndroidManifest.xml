@@ -32,9 +32,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".noticeActivity" />
-        <activity android:name=".apiWebwindow" />
-        <activity android:name=".PaymentActivity" />
+        <activity android:name=".NoticeActivity" android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".ApiWebwindow"/>
+
+        <activity android:name=".PaymentListActivity" />
+        <activity android:name=".AddPlanToList"  />
+        <activity android:name=".DetailedProductInfoActivity"  />
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.Dark" />
