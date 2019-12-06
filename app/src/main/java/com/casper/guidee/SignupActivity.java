@@ -23,6 +23,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,6 +92,7 @@ public class SignupActivity extends AppCompatActivity {
     // 버튼 클릭 시 동작
     public void signup() {
         Log.d(TAG, "Signup");
+        emailText.setError(null);
 
         // 회원 정보 유효성 검사
         if (!validate()) {
@@ -118,16 +120,34 @@ public class SignupActivity extends AppCompatActivity {
 
         // TODO: 회원 DB와 연동 및 데이터 저장
         InsertData task = new InsertData();
-        task.execute("http://guidee.casper.or.kr/reg2.php", email, password, name, gender, nation, date_text);
+        //task.execute("http://guidee.casper.or.kr/reg2.php", email, password, name, gender, nation, date_text);
+
+
+        String signupResult = null;
+        try {
+            signupResult = task.execute("http://guidee.casper.or.kr/reg2.php", email, password, name, gender, nation, date_text).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("sign result log = ", signupResult);
+
 
         // 종료
         // 로그인 액티비티에 결과 넘겨줌
+        String finalSignupResult = signupResult;
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
+                        if(finalSignupResult.contains("1062")){
+                            Toast.makeText(getBaseContext(), "Duplicated ID", Toast.LENGTH_LONG).show();
+                            emailText.setError("Duplicated Email");
+                            signupButton.setEnabled(true);
+                        }else {
+                            onSignupSuccess();
+                        }
                         // onSignupFailed();
                         progressDialog.dismiss();
                     }

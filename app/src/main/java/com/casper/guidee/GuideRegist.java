@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,13 +104,33 @@ public class GuideRegist extends AppCompatActivity {
 
         // 정보 전송
         InsertGuideDate task = new InsertGuideDate();
-        task.execute("http://guidee.casper.or.kr/guideReg2.php", id, guideJob, guideInfo);
+        //task.execute("http://guidee.casper.or.kr/guideReg2.php", id, guideJob, guideInfo);
+
+        String guideRegResult = null;
+
+        try {
+            guideRegResult = task.execute("http://guidee.casper.or.kr/guideReg2.php", id, guideJob, guideInfo).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("GUIDE REG = ", guideRegResult);
 
         // 종료
+        String finalGuideRegResult = guideRegResult;
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        onGuidRegSuccess();
+                        if(finalGuideRegResult.contains("1062")){
+                            Toast.makeText(getBaseContext(), "Already Registed", Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                        else {
+                            onGuidRegSuccess();
+                        }
+
                         progressDialog.dismiss();
                     }
                 }, 3000);
