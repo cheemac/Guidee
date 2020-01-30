@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
+//sibal!?
     TextView txtResult;
 
     SharedPreferences log = null;
